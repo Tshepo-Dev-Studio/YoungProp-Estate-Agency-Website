@@ -3,24 +3,56 @@
 
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>YoungProp Estate Agency</title>    
-    <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="description" content="YoungProp Estate Agency - Find your perfect property in Walkerville, Gauteng. Vacant land, plots, and houses for sale. Expert real estate services." />
+    <meta name="keywords" content="YoungProp, estate agency, property for sale, vacant land, plots, Walkerville, Gauteng, South Africa, PPRA registered" />
+    <meta property="og:title" content="YoungProp Estate Agency | Property for Sale in Walkerville" />
+    <meta property="og:description" content="Find your perfect property in Walkerville, Gauteng. Vacant land, plots, and houses for sale. PPRA registered estate agency." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.youngprop.co.za" />
+    <meta property="og:image" content="https://www.youngprop.co.za/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="YoungProp Estate Agency" />
+    <meta name="twitter:description" content="Find your perfect property in Walkerville, Gauteng." />
+    <link rel="canonical" href="https://www.youngprop.co.za" />
+    <title>YoungProp Estate Agency | Property for Sale in Walkerville, Gauteng</title>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "YoungProp Estate Agency",
+      "url": "https://www.youngprop.co.za",
+      "telephone": "+27737124178",
+      "email": "info@youngprop.co.za",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Walkerville",
+        "addressRegion": "Gauteng",
+        "addressCountry": "ZA"
+      },
+      "description": "PPRA registered estate agency specialising in vacant land, plots, and residential property in Walkerville, Gauteng.",
+      "areaServed": "Walkerville, Gauteng, South Africa"
+    }
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Manus Analytics -->
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
       data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+    <!-- Google Analytics and Meta Pixel are initialized dynamically via src/lib/analytics.ts -->
+    <!-- Set VITE_GA_MEASUREMENT_ID and VITE_META_PIXEL_ID environment variables to activate them -->
   </body>
 
 </html>

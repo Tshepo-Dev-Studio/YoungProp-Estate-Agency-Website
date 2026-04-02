@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import { initGA, initMetaPixel } from "@/lib/analytics";
 import { UNAUTHED_ERR_MSG } from '@shared/const';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, TRPCClientError } from "@trpc/client";
@@ -51,6 +52,10 @@ const trpcClient = trpc.createClient({
     }),
   ],
 });
+
+// Initialize analytics
+initGA();
+initMetaPixel();
 
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>

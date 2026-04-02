@@ -1,0 +1,30 @@
+# YoungProp Website TODO
+
+- [x] Set up database schema (website_listings, website_leads, website_valuations, website_testimonials, website_blog_posts) in Supabase
+- [x] Configure global styles with navy blue and gold color scheme
+- [x] Set up Google Fonts (Inter + Playfair Display)
+- [x] Build Navbar with sticky scroll behavior and mobile menu
+- [x] Build Hero section with search bar and property type tabs
+- [x] Build Property Listings page with Supabase integration
+- [x] Build Property filtering (type, location, price range)
+- [x] Build Property search with autocomplete
+- [x] Build individual Property detail page
+- [x] Build Lead capture / Property inquiry form with Supabase
+- [x] Build Free Valuation form with Supabase
+- [x] Build Contact page with form and Supabase
+- [x] Build Testimonials section with star ratings
+- [x] Build Blog/Articles section with SEO
+- [x] Build individual Blog post page
+- [x] Build About Us / Team section
+- [x] Build WhatsApp click-to-chat floating button
+- [x] Integrate Google Analytics (GA4) — dynamic, activated by VITE_GA_MEASUREMENT_ID env var
+- [x] Integrate Meta Pixel — dynamic, activated by VITE_META_PIXEL_ID env var
+- [x] Build Stats/social proof section
+- [x] Build Footer with links, contact info, PPRA badge
+- [x] Responsive design for mobile, tablet, desktop
+- [x] Add Supabase secrets (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+- [x] Write Vitest tests for backend procedures (8 tests passing)
+- [ ] Add Google Analytics Measurement ID (VITE_GA_MEASUREMENT_ID) when available
+- [ ] Add Meta Pixel ID (VITE_META_PIXEL_ID) when available
+- [ ] Configure custom domain (youngprop.co.za) after publishing
+- [ ] Save checkpoint and publish via Manus UI
