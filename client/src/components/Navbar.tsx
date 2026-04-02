@@ -16,14 +16,22 @@ const navLinks = [
   },
   { label: 'Free Valuation', href: '/valuation' },
   { label: 'Blog', href: '/blog' },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
+  {
+    label: 'Company',
+    href: '/about',
+    children: [
+      { label: 'About Us', href: '/about' },
+      { label: 'Join Our Team', href: '/join-us' },
+      { label: 'Referral Programme', href: '/referrals' },
+      { label: 'Contact Us', href: '/contact' },
+    ],
+  },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [location] = useLocation();
   const isHome = location === '/';
 
@@ -35,7 +43,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
-    setDropdownOpen(false);
+    setOpenDropdown(null);
   }, [location]);
 
   const navBg = isHome && !scrolled
@@ -77,13 +85,13 @@ export default function Navbar() {
             link.children ? (
               <div key={link.label} className="relative">
                 <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  onClick={() => setOpenDropdown(openDropdown === link.label ? null : link.label)}
                   className="flex items-center gap-1 px-4 py-2 text-white/90 hover:text-gold text-sm font-medium transition-colors rounded-md hover:bg-white/5"
                 >
                   {link.label}
-                  <ChevronDown size={14} className={`transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={14} className={`transition-transform ${openDropdown === link.label ? 'rotate-180' : ''}`} />
                 </button>
-                {dropdownOpen && (
+                {openDropdown === link.label && (
                   <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">
                     {link.children.map((child) => (
                       <Link

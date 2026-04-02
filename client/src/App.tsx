@@ -12,6 +12,8 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
+import JoinUs from "./pages/JoinUs";
+import Referrals from "./pages/Referrals";
 
 function Router() {
   return (
@@ -24,6 +26,8 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/about" component={About} />
+      <Route path="/join-us" component={JoinUs} />
+      <Route path="/referrals" component={Referrals} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

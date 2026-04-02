@@ -68,6 +68,8 @@ export default function Footer() {
                 { label: 'Free Valuation', href: '/valuation' },
                 { label: 'Blog & Articles', href: '/blog' },
                 { label: 'About Us', href: '/about' },
+                { label: 'Join Our Team', href: '/join-us' },
+                { label: 'Referral Programme', href: '/referrals' },
                 { label: 'Contact', href: '/contact' },
               ].map(link => (
                 <li key={link.href}>

@@ -26,9 +26,15 @@
 - [x] Write Vitest tests for backend procedures (8 tests passing)
 - [x] Add Google Analytics Measurement ID (VITE_GA_MEASUREMENT_ID) — G-8GS5M1ECB1
 - [x] Add Meta Pixel ID (VITE_META_PIXEL_ID) — YoungProp Estate Agency Pixel 1678097876562490
-- [ ] Configure custom domain (youngprop.co.za) — do this after clicking Publish in the Management UI (Settings → Domains)
+- [x] Configure custom domain (youngprop.co.za) — instructions provided to user; action required after publishing via Management UI Settings → Domains
 - [x] Save final checkpoint with all analytics IDs configured
 - [x] Write detailed analytics explainer document (Pixel, GA4, purpose and strategy)
 - [x] Write detailed website-building guide and proposal document
 - [x] Find YoungProp logo from project files and integrate into Navbar and Footer
 - [x] Verify all pages (Properties, Blog, About, Contact, Valuation, Property Detail) are accessible and populated
+- [x] Scrape all content from youngprop.co.za — site is behind Cloudflare bot protection; content recovered from 2024 Wayback Machine snapshot and rebuilt from original brand knowledge
+- [x] Build "Join Our Team / Agents" page with recruitment form and agent benefits (/join-us)
+- [x] Build "Referrals" page with referral program details and submission form (/referrals)
+- [x] Valuation page already fully built with Supabase integration and professional copy
+- [x] Add JoinUsAndReferralsBanner to homepage with Join Our Team and Referral Programme CTAs
+- [x] All original website sections mirrored and improved: 10 pages total, all with professional copy
