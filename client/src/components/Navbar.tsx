@@ -61,16 +61,13 @@ export default function Navbar() {
       {/* Main nav */}
       <nav className="container flex items-center justify-between py-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-lg bg-gold flex items-center justify-center shadow-md group-hover:bg-gold-dark transition-colors">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H15V15H9V21H4C3.44772 21 3 20.5523 3 20V9.5Z" fill="#0d1b3e"/>
-              <path d="M9 21V15H15V21" stroke="#0d1b3e" strokeWidth="0.5"/>
-            </svg>
-          </div>
-          <div>
-            <span className="block text-white font-bold text-lg leading-tight tracking-wide font-display">YOUNGPROP</span>
-            <span className="block text-gold text-xs tracking-[0.2em] uppercase leading-tight">Estate Agency</span>
+        <Link href="/" className="flex items-center group">
+          <div className="bg-white rounded-xl px-3 py-1.5 shadow-md group-hover:shadow-lg transition-shadow">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663501965969/UAPuMLEFrvDPDCGWUkrp3y/youngprop-logo_da10d034.png"
+              alt="YoungProp Estate Agency"
+              className="h-12 w-auto object-contain"
+            />
           </div>
         </Link>
 

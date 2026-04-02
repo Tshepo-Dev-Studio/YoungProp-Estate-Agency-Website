@@ -13,16 +13,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-gold flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 9.5L12 3L21 9.5V20C21 20.5523 20.5523 21 20 21H15V15H9V21H4C3.44772 21 3 20.5523 3 20V9.5Z" fill="#0d1b3e"/>
-                </svg>
-              </div>
-              <div>
-                <span className="block text-white font-bold text-lg leading-tight font-display">YOUNGPROP</span>
-                <span className="block text-gold text-xs tracking-[0.2em] uppercase">Estate Agency</span>
-              </div>
+            <div className="mb-4">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663501965969/UAPuMLEFrvDPDCGWUkrp3y/youngprop-logo_da10d034.png"
+                alt="YoungProp Estate Agency"
+                className="h-16 w-auto object-contain brightness-0 invert"
+              />
             </div>
             <p className="text-white/60 text-sm leading-relaxed mb-5">
               Your trusted property specialists in Walkerville and Gauteng. Helping buyers, sellers,
