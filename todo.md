@@ -24,7 +24,7 @@
 - [x] Responsive design for mobile, tablet, desktop
 - [x] Add Supabase secrets (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
 - [x] Write Vitest tests for backend procedures (8 tests passing)
-- [ ] Add Google Analytics Measurement ID (VITE_GA_MEASUREMENT_ID) when available
-- [ ] Add Meta Pixel ID (VITE_META_PIXEL_ID) when available
+- [x] Add Google Analytics Measurement ID (VITE_GA_MEASUREMENT_ID) — G-8GS5M1ECB1
+- [x] Add Meta Pixel ID (VITE_META_PIXEL_ID) — YoungProp Estate Agency Pixel 1678097876562490
 - [ ] Configure custom domain (youngprop.co.za) after publishing
-- [ ] Save checkpoint and publish via Manus UI
+- [x] Save final checkpoint with all analytics IDs configured

@@ -88,6 +88,8 @@ describe("Analytics configuration", () => {
     const gaId = process.env.VITE_GA_MEASUREMENT_ID;
     if (gaId) {
       expect(gaId).toMatch(/^G-[A-Z0-9]+$/);
+      // Verify it matches the configured YoungProp GA4 property
+      expect(gaId).toBe("G-8GS5M1ECB1");
     } else {
       // Optional — not required for site to function
       expect(gaId).toBeUndefined();
@@ -98,6 +100,8 @@ describe("Analytics configuration", () => {
     const pixelId = process.env.VITE_META_PIXEL_ID;
     if (pixelId) {
       expect(pixelId).toMatch(/^\d+$/);
+      // Verify it matches the YoungProp Estate Agency Pixel
+      expect(pixelId).toBe("1678097876562490");
     } else {
       // Optional — not required for site to function
       expect(pixelId).toBeUndefined();
