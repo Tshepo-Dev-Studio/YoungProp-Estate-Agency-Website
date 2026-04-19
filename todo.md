@@ -38,3 +38,22 @@
 - [x] Valuation page already fully built with Supabase integration and professional copy
 - [x] Add JoinUsAndReferralsBanner to homepage with Join Our Team and Referral Programme CTAs
 - [x] All original website sections mirrored and improved: 10 pages total, all with professional copy
+
+## GitHub & Vercel Deployment
+- [x] Create GitHub repository "YoungProp Estate Agency Website" — github.com/Tshepo-Dev-Studio/YoungProp-Estate-Agency-Website
+- [x] Push all website code to GitHub
+- [x] Deploy to Vercel — https://young-prop-estate-agency-website.vercel.app
+- [x] Configure Vercel environment variables (Supabase, GA4, Meta Pixel)
+
+## Staff & Admin Platform
+- [x] Design staff/admin platform architecture (role-based: agent, admin)
+- [x] Build PortalDashboard with stats, activity feed, quick actions
+- [x] Build PortalDeals — deal pipeline with stage tracking (Prospecting → Closed)
+- [x] Build PortalTasks — task management with priority and due dates
+- [x] Build PortalLeads — lead management with status updates
+- [x] Build PortalListings — listings overview with Supabase editor link
+- [x] Build PortalValuations — valuation requests with status management
+- [x] Build PortalProfile — agent profile with FFC number, bio, monthly target
+- [x] Build AdminAgents — admin-only view of all registered agents
+- [x] Connect portal to existing Supabase database (agent_profiles, deals, tasks, activity_log tables)
+- [ ] Save final checkpoint and deliver portal to user

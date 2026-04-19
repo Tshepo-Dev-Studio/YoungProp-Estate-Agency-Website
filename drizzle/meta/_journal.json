@@ -15,6 +15,13 @@
       "when": 1775129422406,
       "tag": "0001_parallel_mad_thinker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1776599087903,
+      "tag": "0002_spotty_songbird",
+      "breakpoints": true
     }
   ]
 }

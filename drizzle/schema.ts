@@ -133,3 +133,89 @@ export const blogPosts = mysqlTable("blog_posts", {
 
 export type BlogPost = typeof blogPosts.$inferSelect;
 export type InsertBlogPost = typeof blogPosts.$inferInsert;
+
+// Agent profiles — staff portal
+export const agentProfiles = mysqlTable("agent_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  fullName: varchar("fullName", { length: 100 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  agentType: mysqlEnum("agentType", ["full_time", "part_time", "referral_partner", "intern"]).default("full_time").notNull(),
+  status: mysqlEnum("status", ["active", "inactive", "pending"]).default("pending").notNull(),
+  ffcNumber: varchar("ffcNumber", { length: 50 }),
+  bio: text("bio"),
+  profilePhoto: varchar("profilePhoto", { length: 500 }),
+  targetMonthly: decimal("targetMonthly", { precision: 15, scale: 2 }),
+  commissionRate: decimal("commissionRate", { precision: 5, scale: 2 }).default("50.00"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AgentProfile = typeof agentProfiles.$inferSelect;
+export type InsertAgentProfile = typeof agentProfiles.$inferInsert;
+
+// Deals — property transactions tracked by agents
+export const deals = mysqlTable("deals", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull(),
+  propertyId: int("propertyId"),
+  propertyTitle: varchar("propertyTitle", { length: 255 }).notNull(),
+  propertyAddress: varchar("propertyAddress", { length: 500 }),
+  dealType: mysqlEnum("dealType", ["sale", "rental", "valuation", "referral"]).default("sale").notNull(),
+  stage: mysqlEnum("stage", [
+    "lead",
+    "viewing_scheduled",
+    "offer_made",
+    "offer_accepted",
+    "conveyancing",
+    "transfer",
+    "closed_won",
+    "closed_lost"
+  ]).default("lead").notNull(),
+  clientName: varchar("clientName", { length: 100 }).notNull(),
+  clientEmail: varchar("clientEmail", { length: 320 }),
+  clientPhone: varchar("clientPhone", { length: 20 }),
+  askingPrice: decimal("askingPrice", { precision: 15, scale: 2 }),
+  offerPrice: decimal("offerPrice", { precision: 15, scale: 2 }),
+  commissionAmount: decimal("commissionAmount", { precision: 15, scale: 2 }),
+  notes: text("notes"),
+  expectedCloseDate: timestamp("expectedCloseDate"),
+  closedAt: timestamp("closedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Deal = typeof deals.$inferSelect;
+export type InsertDeal = typeof deals.$inferInsert;
+
+// Tasks — agent to-do items linked to deals or standalone
+export const tasks = mysqlTable("tasks", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull(),
+  dealId: int("dealId"),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
+  status: mysqlEnum("status", ["todo", "in_progress", "done", "cancelled"]).default("todo").notNull(),
+  dueDate: timestamp("dueDate"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Task = typeof tasks.$inferSelect;
+export type InsertTask = typeof tasks.$inferInsert;
+
+// Activity log — audit trail of all portal actions
+export const activityLog = mysqlTable("activity_log", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entityType", { length: 50 }),
+  entityId: int("entityId"),
+  details: text("details"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ActivityLog = typeof activityLog.$inferSelect;
+export type InsertActivityLog = typeof activityLog.$inferInsert;

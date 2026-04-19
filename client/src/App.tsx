@@ -14,6 +14,14 @@ import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
 import JoinUs from "./pages/JoinUs";
 import Referrals from "./pages/Referrals";
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import PortalDeals from "./pages/portal/PortalDeals";
+import PortalTasks from "./pages/portal/PortalTasks";
+import PortalLeads from "./pages/portal/PortalLeads";
+import PortalListings from "./pages/portal/PortalListings";
+import PortalValuations from "./pages/portal/PortalValuations";
+import PortalProfile from "./pages/portal/PortalProfile";
+import AdminAgents from "./pages/portal/AdminAgents";
 
 function Router() {
   return (
@@ -28,6 +36,15 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/join-us" component={JoinUs} />
       <Route path="/referrals" component={Referrals} />
+      {/* Staff Portal Routes */}
+      <Route path="/portal" component={PortalDashboard} />
+      <Route path="/portal/deals" component={PortalDeals} />
+      <Route path="/portal/tasks" component={PortalTasks} />
+      <Route path="/portal/leads" component={PortalLeads} />
+      <Route path="/portal/listings" component={PortalListings} />
+      <Route path="/portal/valuations" component={PortalValuations} />
+      <Route path="/portal/profile" component={PortalProfile} />
+      <Route path="/portal/agents" component={AdminAgents} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
