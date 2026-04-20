@@ -73,3 +73,11 @@
 - [x] Update App.tsx — add new portal routes
 - [x] Run tests (pnpm test) — 18/18 passing
 - [x] Save checkpoint and deliver
+
+## Interactive Portal Prototypes (Design Review Phase)
+- [x] Build /portal/preview entry page — switcher letting client jump between all three role prototypes
+- [x] Build /portal/preview/admin — Admin prototype: full sidebar, dashboard with sample KPIs, deals table, commission tracker, referral payouts, agents page, applications page
+- [x] Build /portal/preview/agent — Agent prototype: scoped sidebar (no Team/Finance), personal KPIs, Kanban deal pipeline, tasks, leads, profile page
+- [x] Build /portal/preview/referral — Referral Partner prototype: no sidebar, full-width, stats cards, referral history table, how-it-works, submit form
+- [x] Run TypeScript checks — 0 errors
+- [x] Save checkpoint and deliver live preview links to client

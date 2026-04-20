@@ -26,6 +26,10 @@ import AdminCommission from "./pages/portal/AdminCommission";
 import AdminPayouts from "./pages/portal/AdminPayouts";
 import AdminApplications from "./pages/portal/AdminApplications";
 import ReferralPartnerPortal from "./pages/portal/ReferralPartnerPortal";
+import PortalPreviewEntry from "./pages/portal/preview/PortalPreviewEntry";
+import AdminPreview from "./pages/portal/preview/AdminPreview";
+import AgentPreview from "./pages/portal/preview/AgentPreview";
+import ReferralPreview from "./pages/portal/preview/ReferralPreview";
 
 function Router() {
   return (
@@ -55,6 +59,13 @@ function Router() {
       <Route path="/portal/admin/applications" component={AdminApplications} />
       <Route path="/portal/admin/referral-partners" component={AdminPayouts} />
       <Route path="/portal/referral" component={ReferralPartnerPortal} />
+      {/* Design Preview Prototypes */}
+      <Route path="/portal/preview" component={PortalPreviewEntry} />
+      <Route path="/portal/preview/admin" component={AdminPreview} />
+      <Route path="/portal/preview/admin/:page" component={AdminPreview} />
+      <Route path="/portal/preview/agent" component={AgentPreview} />
+      <Route path="/portal/preview/agent/:page" component={AgentPreview} />
+      <Route path="/portal/preview/referral" component={ReferralPreview} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
