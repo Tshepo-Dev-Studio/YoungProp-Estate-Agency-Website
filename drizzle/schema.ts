@@ -154,6 +154,27 @@ export const agentProfiles = mysqlTable("agent_profiles", {
 export type AgentProfile = typeof agentProfiles.$inferSelect;
 export type InsertAgentProfile = typeof agentProfiles.$inferInsert;
 
+// Referral partners — external referrers (separate from agent_profiles)
+export const referralPartners = mysqlTable("referral_partners", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  fullName: varchar("fullName", { length: 100 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  email: varchar("email", { length: 320 }),
+  idNumber: varchar("idNumber", { length: 20 }),
+  bankDetails: text("bankDetails"), // JSON: { bank, accountNumber, branchCode, accountType }
+  referralSource: varchar("referralSource", { length: 100 }), // How they found YoungProp
+  status: mysqlEnum("status", ["active", "inactive", "pending"]).default("pending").notNull(),
+  totalReferrals: int("totalReferrals").default(0),
+  totalEarnings: decimal("totalEarnings", { precision: 15, scale: 2 }).default("0.00"),
+  totalPaid: decimal("totalPaid", { precision: 15, scale: 2 }).default("0.00"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReferralPartner = typeof referralPartners.$inferSelect;
+export type InsertReferralPartner = typeof referralPartners.$inferInsert;
+
 // Deals — property transactions tracked by agents
 export const deals = mysqlTable("deals", {
   id: int("id").autoincrement().primaryKey(),
@@ -178,6 +199,12 @@ export const deals = mysqlTable("deals", {
   askingPrice: decimal("askingPrice", { precision: 15, scale: 2 }),
   offerPrice: decimal("offerPrice", { precision: 15, scale: 2 }),
   commissionAmount: decimal("commissionAmount", { precision: 15, scale: 2 }),
+  commissionPaid: boolean("commissionPaid").default(false),
+  // Referral partner linkage
+  referralPartnerId: int("referralPartnerId"),
+  referralFeeAmount: decimal("referralFeeAmount", { precision: 15, scale: 2 }),
+  referralFeePaid: boolean("referralFeePaid").default(false),
+  showPriceToReferrer: boolean("showPriceToReferrer").default(false),
   notes: text("notes"),
   expectedCloseDate: timestamp("expectedCloseDate"),
   closedAt: timestamp("closedAt"),

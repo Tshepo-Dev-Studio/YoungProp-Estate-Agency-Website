@@ -116,3 +116,85 @@ describe("YoungProp website routes", () => {
     expect(caller.system).toBeDefined();
   });
 });
+
+describe("Portal router — unauthenticated access", () => {
+  it("portal.getMyProfile throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.getMyProfile()).rejects.toThrow();
+  });
+
+  it("portal.getDashboardStats throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.getDashboardStats()).rejects.toThrow();
+  });
+
+  it("portal.listMyDeals throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.listMyDeals()).rejects.toThrow();
+  });
+
+  it("portal.getCommissionSummary throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.getCommissionSummary()).rejects.toThrow();
+  });
+
+  it("portal.listReferralPayouts throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.listReferralPayouts()).rejects.toThrow();
+  });
+
+  it("portal.getMyReferrals throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.getMyReferrals()).rejects.toThrow();
+  });
+
+  it("portal.getReferralEarnings throws UNAUTHORIZED for unauthenticated user", async () => {
+    const ctx = createPublicContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.getReferralEarnings()).rejects.toThrow();
+  });
+});
+
+describe("Portal router — non-admin access to admin procedures", () => {
+  function createAgentContext(): TrpcContext {
+    return {
+      user: {
+        id: 99,
+        openId: "agent-user",
+        email: "agent@youngprop.co.za",
+        name: "Test Agent",
+        loginMethod: "manus",
+        role: "user",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastSignedIn: new Date(),
+      },
+      req: { protocol: "https", headers: {} } as TrpcContext["req"],
+      res: { clearCookie: () => {} } as TrpcContext["res"],
+    };
+  }
+
+  it("portal.getCommissionSummary throws FORBIDDEN for non-admin", async () => {
+    const ctx = createAgentContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.getCommissionSummary()).rejects.toThrow();
+  });
+
+  it("portal.listReferralPayouts throws FORBIDDEN for non-admin", async () => {
+    const ctx = createAgentContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.listReferralPayouts()).rejects.toThrow();
+  });
+
+  it("portal.listAllReferralPartners throws FORBIDDEN for non-admin", async () => {
+    const ctx = createAgentContext();
+    const caller = appRouter.createCaller(ctx);
+    await expect(caller.portal.listAllReferralPartners()).rejects.toThrow();
+  });
+});

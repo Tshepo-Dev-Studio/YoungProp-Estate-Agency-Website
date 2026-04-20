@@ -22,6 +22,13 @@
       "when": 1776599087903,
       "tag": "0002_spotty_songbird",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1776666755388,
+      "tag": "0003_talented_tigra",
+      "breakpoints": true
     }
   ]
 }

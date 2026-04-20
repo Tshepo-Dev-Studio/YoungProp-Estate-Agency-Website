@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import {
   Briefcase, Users, ClipboardList, CheckSquare,
-  TrendingUp, Clock, AlertCircle, ChevronRight, Plus
+  TrendingUp, Clock, AlertCircle, ChevronRight, Plus,
+  DollarSign, UserCheck
 } from "lucide-react";
 
 const stageColors: Record<string, string> = {
@@ -50,6 +51,9 @@ export default function PortalDashboard() {
     return "Good evening";
   };
 
+  const isAdmin = user?.role === "admin";
+  const isIntern = stats?.agentType === "intern";
+
   const StatCard = ({ icon: Icon, label, value, sub, color }: {
     icon: React.ElementType; label: string; value: number | string; sub?: string; color: string;
   }) => (
@@ -73,13 +77,25 @@ export default function PortalDashboard() {
     <PortalLayout title={`${greeting()}, ${user?.name?.split(" ")[0] ?? "Agent"}`}>
       <div className="max-w-6xl mx-auto space-y-6">
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={Briefcase} label="My Deals" value={stats?.myDeals ?? 0} sub={`${stats?.myActiveDeals ?? 0} active`} color="bg-[#0A1628]/10 text-[#0A1628]" />
-          <StatCard icon={TrendingUp} label="Closed Deals" value={stats?.myClosedDeals ?? 0} sub="this period" color="bg-green-100 text-green-700" />
-          <StatCard icon={Users} label="New Leads" value={stats?.newLeads ?? 0} sub={`${stats?.totalLeads ?? 0} total`} color="bg-blue-100 text-blue-700" />
-          <StatCard icon={ClipboardList} label="Valuations" value={stats?.pendingValuations ?? 0} sub="pending" color="bg-[#C9A84C]/20 text-[#C9A84C]" />
-        </div>
+        {/* Stats Grid — role-scoped */}
+        {isAdmin ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon={Briefcase} label="Total Deals" value={stats?.myDeals ?? 0} sub={`${stats?.myActiveDeals ?? 0} active`} color="bg-[#0A1628]/10 text-[#0A1628]" />
+            <StatCard icon={Users} label="New Leads" value={stats?.newLeads ?? 0} sub={`${stats?.totalLeads ?? 0} total`} color="bg-blue-100 text-blue-700" />
+            <StatCard icon={DollarSign} label="Commission YTD" value={stats?.commissionYTD ? `R ${Number(stats.commissionYTD).toLocaleString()}` : "—"} sub="all agents" color="bg-[#C9A84C]/20 text-[#C9A84C]" />
+            <StatCard icon={UserCheck} label="Active Agents" value={stats?.allAgentsCount ?? 0} sub="registered staff" color="bg-purple-100 text-purple-700" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon={Briefcase} label="My Deals" value={stats?.myDeals ?? 0} sub={`${stats?.myActiveDeals ?? 0} active`} color="bg-[#0A1628]/10 text-[#0A1628]" />
+            <StatCard icon={TrendingUp} label="Closed Deals" value={stats?.myClosedDeals ?? 0} sub="this period" color="bg-green-100 text-green-700" />
+            <StatCard icon={Users} label="New Leads" value={stats?.newLeads ?? 0} sub={`${stats?.totalLeads ?? 0} total`} color="bg-blue-100 text-blue-700" />
+            {isIntern
+              ? <StatCard icon={ClipboardList} label="Valuations" value={stats?.pendingValuations ?? 0} sub="pending" color="bg-[#C9A84C]/20 text-[#C9A84C]" />
+              : <StatCard icon={DollarSign} label="Commission YTD" value={stats?.commissionYTD ? `R ${Number(stats.commissionYTD).toLocaleString()}` : "—"} sub={stats?.targetMonthly ? `Target: R ${Number(stats.targetMonthly).toLocaleString()}/mo` : undefined} color="bg-[#C9A84C]/20 text-[#C9A84C]" />
+            }
+          </div>
+        )}
 
         {/* Main Grid */}
         <div className="grid lg:grid-cols-3 gap-6">

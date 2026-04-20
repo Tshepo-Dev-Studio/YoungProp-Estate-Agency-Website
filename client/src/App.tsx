@@ -22,6 +22,10 @@ import PortalListings from "./pages/portal/PortalListings";
 import PortalValuations from "./pages/portal/PortalValuations";
 import PortalProfile from "./pages/portal/PortalProfile";
 import AdminAgents from "./pages/portal/AdminAgents";
+import AdminCommission from "./pages/portal/AdminCommission";
+import AdminPayouts from "./pages/portal/AdminPayouts";
+import AdminApplications from "./pages/portal/AdminApplications";
+import ReferralPartnerPortal from "./pages/portal/ReferralPartnerPortal";
 
 function Router() {
   return (
@@ -44,7 +48,13 @@ function Router() {
       <Route path="/portal/listings" component={PortalListings} />
       <Route path="/portal/valuations" component={PortalValuations} />
       <Route path="/portal/profile" component={PortalProfile} />
+      <Route path="/portal/admin/agents" component={AdminAgents} />
       <Route path="/portal/agents" component={AdminAgents} />
+      <Route path="/portal/admin/commission" component={AdminCommission} />
+      <Route path="/portal/admin/payouts" component={AdminPayouts} />
+      <Route path="/portal/admin/applications" component={AdminApplications} />
+      <Route path="/portal/admin/referral-partners" component={AdminPayouts} />
+      <Route path="/portal/referral" component={ReferralPartnerPortal} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

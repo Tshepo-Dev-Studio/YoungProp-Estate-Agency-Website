@@ -56,4 +56,20 @@
 - [x] Build PortalProfile — agent profile with FFC number, bio, monthly target
 - [x] Build AdminAgents — admin-only view of all registered agents
 - [x] Connect portal to existing Supabase database (agent_profiles, deals, tasks, activity_log tables)
-- [ ] Save final checkpoint and deliver portal to user
+- [x] Save final checkpoint and deliver portal to user — version 7de85a7f
+
+## Three-Layer Portal System
+- [x] Audit existing portal code and map current state
+- [x] Write portal design proposal document (Admin, Agent, Referral Partner views)
+- [x] Update drizzle/schema.ts — add referral_partners table + 5 new fields to deals table
+- [x] Generate and apply migration for new schema
+- [x] Update server/routers/portal.ts — add referral partner procedures + admin commission/payout routes + scope agent queries
+- [x] Update PortalLayout.tsx — role-based routing (admin sidebar, agent sidebar, referral partner no-sidebar)
+- [x] Build ReferralPartnerPortal.tsx — single-page view with referrals table + inline submission form
+- [x] Build AdminCommission.tsx — commission tracker with agent breakdown and YTD totals
+- [x] Build AdminPayouts.tsx — referral payout management with mark-as-paid
+- [x] Build AdminApplications.tsx — review Join Us form submissions from Supabase
+- [x] Update PortalDashboard.tsx — role-scoped KPIs (admin vs agent vs intern)
+- [x] Update App.tsx — add new portal routes
+- [x] Run tests (pnpm test) — 18/18 passing
+- [x] Save checkpoint and deliver
