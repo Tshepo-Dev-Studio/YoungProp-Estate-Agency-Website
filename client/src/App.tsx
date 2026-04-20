@@ -30,6 +30,8 @@ import PortalPreviewEntry from "./pages/portal/preview/PortalPreviewEntry";
 import AdminPreview from "./pages/portal/preview/AdminPreview";
 import AgentPreview from "./pages/portal/preview/AgentPreview";
 import ReferralPreview from "./pages/portal/preview/ReferralPreview";
+import AcceptInvite from "./pages/portal/AcceptInvite";
+import PartnerTokenPortal from "./pages/portal/PartnerTokenPortal";
 
 function Router() {
   return (
@@ -59,6 +61,9 @@ function Router() {
       <Route path="/portal/admin/applications" component={AdminApplications} />
       <Route path="/portal/admin/referral-partners" component={AdminPayouts} />
       <Route path="/portal/referral" component={ReferralPartnerPortal} />
+      {/* Invite & Token Routes */}
+      <Route path="/portal/join/:token" component={AcceptInvite} />
+      <Route path="/partner/:token" component={PartnerTokenPortal} />
       {/* Design Preview Prototypes */}
       <Route path="/portal/preview" component={PortalPreviewEntry} />
       <Route path="/portal/preview/admin" component={AdminPreview} />

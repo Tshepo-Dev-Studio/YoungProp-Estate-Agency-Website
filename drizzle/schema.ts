@@ -246,3 +246,34 @@ export const activityLog = mysqlTable("activity_log", {
 
 export type ActivityLog = typeof activityLog.$inferSelect;
 export type InsertActivityLog = typeof activityLog.$inferInsert;
+
+// Agent invites — admin sends invite link to new agents
+export const agentInvites = mysqlTable("agent_invites", {
+  id: int("id").autoincrement().primaryKey(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  email: varchar("email", { length: 320 }).notNull(),
+  role: mysqlEnum("role", ["admin", "agent", "intern"]).default("agent").notNull(),
+  invitedBy: int("invitedBy").notNull(), // userId of admin who sent invite
+  used: boolean("used").default(false).notNull(),
+  usedAt: timestamp("usedAt"),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AgentInvite = typeof agentInvites.$inferSelect;
+export type InsertAgentInvite = typeof agentInvites.$inferInsert;
+
+// Referral access tokens — admin generates a unique link per referral partner
+export const referralAccessTokens = mysqlTable("referral_access_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  partnerId: int("partnerId").notNull(), // referral_partners.id
+  partnerName: varchar("partnerName", { length: 100 }).notNull(),
+  partnerEmail: varchar("partnerEmail", { length: 320 }),
+  active: boolean("active").default(true).notNull(),
+  lastAccessedAt: timestamp("lastAccessedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ReferralAccessToken = typeof referralAccessTokens.$inferSelect;
+export type InsertReferralAccessToken = typeof referralAccessTokens.$inferInsert;

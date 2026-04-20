@@ -14,6 +14,15 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   CreditCard,
   CheckCircle2,
@@ -21,6 +30,10 @@ import {
   HandshakeIcon,
   Eye,
   EyeOff,
+  Link2,
+  Copy,
+  CheckCheck,
+  Loader2,
 } from "lucide-react";
 
 function formatZAR(amount: number) {
@@ -49,6 +62,10 @@ export default function AdminPayouts() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
   const [filterPaid, setFilterPaid] = useState<string>("all");
+  const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (user && user.role !== "admin") navigate("/portal");
@@ -65,6 +82,22 @@ export default function AdminPayouts() {
     },
     onError: () => toast.error("Failed to update fee status."),
   });
+
+  const generateLinkMutation = trpc.portal.generateReferralPartnerLink.useMutation({
+    onSuccess: (data) => {
+      setGeneratedLink(data.portalUrl);
+      toast.success("Partner portal link generated!");
+    },
+    onError: (err) => toast.error(err.message ?? "Failed to generate link."),
+  });
+
+  const handleCopy = () => {
+    if (!generatedLink) return;
+    navigator.clipboard.writeText(generatedLink);
+    setCopied(true);
+    toast.success("Link copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const togglePrice = trpc.portal.toggleShowPriceToReferrer.useMutation({
     onSuccess: () => {
@@ -146,37 +179,48 @@ export default function AdminPayouts() {
         {partners.length > 0 && (
           <Card className="border-0 shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold text-[#0A1628]">
-                Registered Referral Partners ({partners.length})
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-semibold text-[#0A1628]">
+                  Registered Referral Partners ({partners.length})
+                </CardTitle>
+                <p className="text-xs text-gray-400">Click a partner to generate their portal link</p>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {partners.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-50 transition-colors cursor-pointer border border-transparent hover:border-[#C9A84C]/30"
+                    onClick={() => {
+                      setSelectedPartnerId(p.id);
+                      setGeneratedLink(null);
+                      setShowLinkDialog(true);
+                    }}
                   >
                     <div className="w-9 h-9 bg-[#0A1628] rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                       {p.fullName.charAt(0).toUpperCase()}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="font-medium text-[#0A1628] text-sm truncate">
                         {p.fullName}
                       </p>
                       <p className="text-xs text-gray-500 truncate">{p.email ?? p.phone}</p>
                     </div>
-                    <Badge
-                      className={`ml-auto text-xs flex-shrink-0 ${
-                        p.status === "active"
-                          ? "bg-green-100 text-green-700 border-0"
-                          : p.status === "pending"
-                          ? "bg-yellow-100 text-yellow-700 border-0"
-                          : "bg-gray-100 text-gray-600 border-0"
-                      }`}
-                    >
-                      {p.status}
-                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      <Badge
+                        className={`text-xs flex-shrink-0 ${
+                          p.status === "active"
+                            ? "bg-green-100 text-green-700 border-0"
+                            : p.status === "pending"
+                            ? "bg-yellow-100 text-yellow-700 border-0"
+                            : "bg-gray-100 text-gray-600 border-0"
+                        }`}
+                      >
+                        {p.status}
+                      </Badge>
+                      <Link2 className="w-3.5 h-3.5 text-[#C9A84C]" />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -338,6 +382,95 @@ export default function AdminPayouts() {
           </CardContent>
         </Card>
       </div>
+      {/* Generate Partner Link Dialog */}
+      <Dialog open={showLinkDialog} onOpenChange={setShowLinkDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#0A1628]">
+              Generate Referral Partner Portal Link
+            </DialogTitle>
+            <DialogDescription>
+              This creates a unique, shareable link for the partner to access their personalised
+              referral portal. They sign in with their Manus account and the link grants them
+              access to their referral history and submission form.
+            </DialogDescription>
+          </DialogHeader>
+
+          {!generatedLink ? (
+            <div className="space-y-4 mt-2">
+              {selectedPartnerId && (() => {
+                const partner = partners.find((p) => p.id === selectedPartnerId);
+                if (!partner) return null;
+                return (
+                  <div className="bg-gray-50 rounded-lg p-3 flex items-center gap-3">
+                    <div className="w-9 h-9 bg-[#0A1628] rounded-full flex items-center justify-center text-white text-sm font-bold">
+                      {partner.fullName.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-medium text-[#0A1628] text-sm">{partner.fullName}</p>
+                      <p className="text-xs text-gray-500">{partner.email ?? partner.phone}</p>
+                    </div>
+                  </div>
+                );
+              })()}
+              <Button
+                className="w-full bg-[#0A1628] hover:bg-[#0A1628]/90 text-white"
+                disabled={!selectedPartnerId || generateLinkMutation.isPending}
+                onClick={() => {
+                  const partner = partners.find((p) => p.id === selectedPartnerId);
+                  if (!partner) return;
+                  generateLinkMutation.mutate({
+                    partnerId: partner.id,
+                    partnerName: partner.fullName,
+                    partnerEmail: partner.email ?? undefined,
+                    origin: window.location.origin,
+                  });
+                }}
+              >
+                {generateLinkMutation.isPending ? (
+                  <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Generating...</>
+                ) : (
+                  <><Link2 className="w-4 h-4 mr-2" /> Generate Portal Link</>
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4 mt-2">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                <p className="text-sm font-semibold text-green-800">Portal Link Ready</p>
+                <p className="text-xs text-green-600 mt-1">
+                  Share this link with the referral partner. It remains active until you deactivate it.
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-600 break-all font-mono border border-gray-200">
+                {generatedLink}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  className="flex-1 bg-[#C9A84C] hover:bg-[#C9A84C]/90 text-white"
+                  onClick={handleCopy}
+                >
+                  {copied ? (
+                    <><CheckCheck className="w-4 h-4 mr-2" /> Copied!</>
+                  ) : (
+                    <><Copy className="w-4 h-4 mr-2" /> Copy Link</>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setGeneratedLink(null);
+                    setShowLinkDialog(false);
+                  }}
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </PortalLayout>
   );
 }

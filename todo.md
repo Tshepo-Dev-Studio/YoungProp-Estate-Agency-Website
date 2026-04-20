@@ -81,3 +81,25 @@
 - [x] Build /portal/preview/referral — Referral Partner prototype: no sidebar, full-width, stats cards, referral history table, how-it-works, submit form
 - [x] Run TypeScript checks — 0 errors
 - [x] Save checkpoint and deliver live preview links to client
+
+## Live Portal Conversion & Authentication
+- [x] Convert AdminPreview.tsx into live PortalDashboard/AdminAgents/AdminCommission/AdminPayouts/AdminApplications pages with real Supabase data
+- [x] Convert AgentPreview.tsx into live PortalDeals (Kanban), PortalLeads, PortalProfile pages with real data scoped to logged-in agent
+- [x] Convert ReferralPreview.tsx into live ReferralPartnerPortal.tsx with real referral data and working form submission
+- [x] Build invite system: admin sends invite → agent clicks link → completes profile → gets portal access
+- [x] Build referral partner token-link system: admin generates unique access link per partner → partner uses link to access their portal (no login required beyond Manus OAuth)
+- [x] Add agent_invites table to schema (token, email, role, used, expires_at)
+- [x] Add referral_access_tokens table to schema (token, partner_id, active, last_accessed_at)
+- [x] Build /portal/join/:token invite acceptance page (agent completes profile)
+- [x] Build /partner/:token referral partner access page (token-gated, full portal)
+- [x] Add "Invite Agent" button to AdminAgents page with invite management panel
+- [x] Add generateReferralPartnerLink + listReferralPartnerTokens procedures to portal router
+- [x] Run tests (18/18 passing) and TypeScript checks (0 errors)
+- [ ] Push to GitHub and save checkpoint
+
+## CEO Master Dashboard
+- [ ] Design CEO dashboard layout: agency revenue, all deals pipeline, lead conversion funnel, commission YTD, agent performance table, referral stats, website traffic
+- [ ] Build /portal/ceo route with real-time data from all portal tables
+- [ ] Add CEO role to user roles enum (admin, agent, intern, referral_partner, ceo)
+- [ ] Gate CEO dashboard behind ceo role check
+- [ ] Save checkpoint and deliver CEO dashboard to client

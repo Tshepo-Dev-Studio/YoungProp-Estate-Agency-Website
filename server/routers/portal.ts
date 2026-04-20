@@ -8,6 +8,9 @@ import {
   valuations,
   activityLog,
   referralPartners,
+  agentInvites,
+  referralAccessTokens,
+  users,
 } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { protectedProcedure, router } from "../_core/trpc";
@@ -869,4 +872,184 @@ export const portalRouter = router({
       );
       return { success: true, id: Number(result[0].insertId) };
     }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADMIN — Agent Invite System
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  createAgentInvite: adminProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        role: z.enum(["admin", "agent", "intern"]).default("agent"),
+        origin: z.string().url(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      // Generate a secure random token
+      const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+      await db.insert(agentInvites).values({
+        token,
+        email: input.email,
+        role: input.role,
+        invitedBy: ctx.user.id,
+        used: false,
+        expiresAt,
+      });
+      const inviteUrl = `${input.origin}/portal/join/${token}`;
+      await logActivity(ctx.user.id, "invite_created", "agent_invite", undefined, `Invited: ${input.email}`);
+      return { success: true, inviteUrl, token };
+    }),
+
+  listAgentInvites: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+    return db.select().from(agentInvites).orderBy(desc(agentInvites.createdAt)).limit(100);
+  }),
+
+  validateInviteToken: protectedProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+      const result = await db
+        .select()
+        .from(agentInvites)
+        .where(eq(agentInvites.token, input.token))
+        .limit(1);
+      const invite = result[0];
+      if (!invite) return { valid: false, reason: "not_found" };
+      if (invite.used) return { valid: false, reason: "already_used" };
+      if (new Date(invite.expiresAt) < new Date()) return { valid: false, reason: "expired" };
+      return { valid: true, email: invite.email, role: invite.role };
+    }),
+
+  acceptInvite: protectedProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        fullName: z.string().min(2),
+        phone: z.string().optional(),
+        ffcNumber: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      const result = await db
+        .select()
+        .from(agentInvites)
+        .where(eq(agentInvites.token, input.token))
+        .limit(1);
+      const invite = result[0];
+      if (!invite || invite.used || new Date(invite.expiresAt) < new Date()) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired invite link." });
+      }
+      // Create agent profile
+      await db.insert(agentProfiles).values({
+        userId: ctx.user.id,
+        fullName: input.fullName,
+        phone: input.phone,
+        agentType: invite.role === "intern" ? "intern" : "full_time",
+        ffcNumber: input.ffcNumber,
+        status: "active",
+      });
+      // Mark invite as used
+      await db
+        .update(agentInvites)
+        .set({ used: true, usedAt: new Date() })
+        .where(eq(agentInvites.token, input.token));
+      // Update user role in users table
+      await db
+        .update(users)
+        .set({ role: invite.role === "admin" ? "admin" : "user" })
+        .where(eq(users.id, ctx.user.id));
+      await logActivity(ctx.user.id, "invite_accepted", "agent_invite", invite.id, `Profile created: ${input.fullName}`);
+      return { success: true };
+    }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADMIN — Referral Partner Token Links
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  generateReferralPartnerLink: adminProcedure
+    .input(
+      z.object({
+        partnerId: z.number(),
+        partnerName: z.string(),
+        partnerEmail: z.string().email().optional(),
+        origin: z.string().url(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      await db.insert(referralAccessTokens).values({
+        token,
+        partnerId: input.partnerId,
+        partnerName: input.partnerName,
+        partnerEmail: input.partnerEmail,
+        active: true,
+      });
+      const portalUrl = `${input.origin}/partner/${token}`;
+      await logActivity(ctx.user.id, "partner_link_generated", "referral_partner", input.partnerId, `Link for: ${input.partnerName}`);
+      return { success: true, portalUrl, token };
+    }),
+
+  listReferralPartnerTokens: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+    return db
+      .select()
+      .from(referralAccessTokens)
+      .orderBy(desc(referralAccessTokens.createdAt))
+      .limit(100);
+  }),
+
+  validatePartnerToken: protectedProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+      const result = await db
+        .select()
+        .from(referralAccessTokens)
+        .where(eq(referralAccessTokens.token, input.token))
+        .limit(1);
+      const tokenRecord = result[0];
+      if (!tokenRecord || !tokenRecord.active) return { valid: false };
+      // Update last accessed
+      await db
+        .update(referralAccessTokens)
+        .set({ lastAccessedAt: new Date() })
+        .where(eq(referralAccessTokens.token, input.token));
+      return {
+        valid: true,
+        partnerId: tokenRecord.partnerId,
+        partnerName: tokenRecord.partnerName,
+        partnerEmail: tokenRecord.partnerEmail,
+      };
+    }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ADMIN — Dashboard stats (enhanced with invite + token counts)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  getPendingInvitesCount: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return 0;
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(agentInvites)
+      .where(and(eq(agentInvites.used, false)));
+    return Number(result[0]?.count ?? 0);
+  }),
 });
