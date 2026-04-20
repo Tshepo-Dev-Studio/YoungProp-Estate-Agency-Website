@@ -32,6 +32,12 @@ import AgentPreview from "./pages/portal/preview/AgentPreview";
 import ReferralPreview from "./pages/portal/preview/ReferralPreview";
 import AcceptInvite from "./pages/portal/AcceptInvite";
 import PartnerTokenPortal from "./pages/portal/PartnerTokenPortal";
+import Contacts from "./pages/portal/Contacts";
+import ContactProfile from "./pages/portal/ContactProfile";
+import CeoDashboard from "./pages/portal/CeoDashboard";
+import Financials from "./pages/portal/Financials";
+import Compliance from "./pages/portal/Compliance";
+import DeedSearch from "./pages/portal/DeedSearch";
 
 function Router() {
   return (
@@ -60,6 +66,13 @@ function Router() {
       <Route path="/portal/admin/payouts" component={AdminPayouts} />
       <Route path="/portal/admin/applications" component={AdminApplications} />
       <Route path="/portal/admin/referral-partners" component={AdminPayouts} />
+      {/* CRM & CEO Routes */}
+      <Route path="/portal/contacts" component={Contacts} />
+      <Route path="/portal/contacts/:id" component={ContactProfile} />
+      <Route path="/portal/ceo" component={CeoDashboard} />
+      <Route path="/portal/financials" component={Financials} />
+      <Route path="/portal/compliance" component={Compliance} />
+      <Route path="/portal/deed-search" component={DeedSearch} />
       <Route path="/portal/referral" component={ReferralPartnerPortal} />
       {/* Invite & Token Routes */}
       <Route path="/portal/join/:token" component={AcceptInvite} />

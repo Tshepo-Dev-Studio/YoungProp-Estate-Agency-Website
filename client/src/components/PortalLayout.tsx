@@ -26,6 +26,11 @@ import {
   UserCheck,
   Building2,
   HandshakeIcon,
+  ShieldCheck,
+  Search,
+  BarChart3,
+  BookUser,
+  Landmark,
 } from "lucide-react";
 
 // ─── Nav item definitions ─────────────────────────────────────────────────
@@ -46,10 +51,18 @@ const agentProfileItems = [
 
 const adminNavItems = [
   { href: "/portal", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/portal/contacts", label: "Contacts (CRM)", icon: BookUser },
   { href: "/portal/deals", label: "All Deals", icon: Briefcase },
   { href: "/portal/leads", label: "All Leads", icon: Users },
   { href: "/portal/valuations", label: "Valuations", icon: ClipboardList },
   { href: "/portal/listings", label: "Listings", icon: Building2 },
+];
+
+const adminCeoItems = [
+  { href: "/portal/ceo", label: "Command Centre", icon: BarChart3 },
+  { href: "/portal/financials", label: "Financials", icon: Landmark },
+  { href: "/portal/compliance", label: "Compliance", icon: ShieldCheck },
+  { href: "/portal/deed-search", label: "Deed Search", icon: Search },
 ];
 
 const adminTeamItems = [
@@ -250,6 +263,13 @@ export default function PortalLayout({ children, title }: PortalLayoutProps) {
               Finance
             </p>
             {adminFinanceItems.map((item) => (
+              <NavLink key={item.href} {...item} />
+            ))}
+
+            <p className="text-xs text-gray-500 uppercase tracking-wider px-3 mt-5 mb-2 font-semibold">
+              CEO Tools
+            </p>
+            {adminCeoItems.map((item) => (
               <NavLink key={item.href} {...item} />
             ))}
 

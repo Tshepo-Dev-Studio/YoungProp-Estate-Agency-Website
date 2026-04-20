@@ -15,7 +15,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "agent", "intern", "ceo"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -277,3 +277,260 @@ export const referralAccessTokens = mysqlTable("referral_access_tokens", {
 
 export type ReferralAccessToken = typeof referralAccessTokens.$inferSelect;
 export type InsertReferralAccessToken = typeof referralAccessTokens.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CRM CONTACTS — central contact record (buyer, seller, tenant, landlord)
+// ─────────────────────────────────────────────────────────────────────────────
+export const contacts = mysqlTable("contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // owner (admin/agent who created)
+  assignedAgentId: int("assignedAgentId"), // agent responsible
+  assistantAgentId: int("assistantAgentId"),
+  assignedAdminId: int("assignedAdminId"),
+
+  // Identity
+  firstName: varchar("firstName", { length: 100 }),
+  surname: varchar("surname", { length: 100 }),
+  fullName: varchar("fullName", { length: 200 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  mobile: varchar("mobile", { length: 20 }),
+  email: varchar("email", { length: 320 }),
+  idNumber: varchar("idNumber", { length: 20 }),
+
+  // Classification
+  contactType: mysqlEnum("contactType", ["buyer", "seller", "tenant", "landlord"]).notNull(),
+  currentStage: varchar("currentStage", { length: 100 }).notNull().default("General"),
+  source: varchar("source", { length: 100 }), // website, deed_search, referral, walk_in, etc.
+  leadDate: timestamp("leadDate"),
+  lastContactedDate: timestamp("lastContactedDate"),
+
+  // POPIA
+  popiaConsent: boolean("popiaConsent").default(false),
+  popiaConsentDate: timestamp("popiaConsentDate"),
+
+  // Buyer-specific
+  budget: varchar("budget", { length: 100 }),
+  preApproval: mysqlEnum("preApproval", ["yes", "no", "in_progress"]),
+  areaOfInterest: varchar("areaOfInterest", { length: 255 }),
+  requirements: text("requirements"),
+
+  // Seller-specific
+  propertyAddress: varchar("propertyAddress", { length: 500 }),
+  estimatedValue: varchar("estimatedValue", { length: 100 }),
+  mandateType: mysqlEnum("mandateType", ["sole", "open", "joint_sole"]),
+
+  // Notes
+  initialNote: text("initialNote"),
+
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = typeof contacts.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTACT NOTES — 4-type note architecture per contact
+// ─────────────────────────────────────────────────────────────────────────────
+export const contactNotes = mysqlTable("contact_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  contactId: int("contactId").notNull(),
+  noteType: mysqlEnum("noteType", ["intro_inquiry", "transcript_log", "transcript_summary", "custom_notes"]).notNull(),
+  noteContent: text("noteContent").notNull(),
+  author: varchar("author", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ContactNote = typeof contactNotes.$inferSelect;
+export type InsertContactNote = typeof contactNotes.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTACT STAGE HISTORY — audit trail of stage changes per contact
+// ─────────────────────────────────────────────────────────────────────────────
+export const contactStageHistory = mysqlTable("contact_stage_history", {
+  id: int("id").autoincrement().primaryKey(),
+  contactId: int("contactId").notNull(),
+  fromStage: varchar("fromStage", { length: 100 }),
+  toStage: varchar("toStage", { length: 100 }).notNull(),
+  changedBy: int("changedBy"), // userId
+  notes: text("notes"),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+});
+
+export type ContactStageHistory = typeof contactStageHistory.$inferSelect;
+export type InsertContactStageHistory = typeof contactStageHistory.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FULL LISTINGS — internal listing management (separate from public properties)
+// ─────────────────────────────────────────────────────────────────────────────
+export const fullListings = mysqlTable("full_listings", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull(),
+  contactId: int("contactId"), // linked seller contact
+
+  // Property details
+  refNo: varchar("refNo", { length: 50 }),
+  address: varchar("address", { length: 500 }).notNull(),
+  suburb: varchar("suburb", { length: 100 }),
+  city: varchar("city", { length: 100 }),
+  province: varchar("province", { length: 100 }),
+  propertyType: mysqlEnum("propertyType", ["house", "apartment", "townhouse", "vacant_land", "commercial", "farm"]).notNull(),
+  listingType: mysqlEnum("listingType", ["for_sale", "for_rent"]).default("for_sale").notNull(),
+
+  // Seller
+  sellerName: varchar("sellerName", { length: 100 }),
+  sellerPhone: varchar("sellerPhone", { length: 20 }),
+  sellerEmail: varchar("sellerEmail", { length: 320 }),
+
+  // Pricing
+  askingPrice: decimal("askingPrice", { precision: 15, scale: 2 }),
+  priceReduced: boolean("priceReduced").default(false),
+
+  // Mandate
+  mandateType: mysqlEnum("mandateType", ["sole", "open", "joint_sole"]),
+  mandateStartDate: timestamp("mandateStartDate"),
+  mandateExpiry: timestamp("mandateExpiry"),
+
+  // Property specs
+  bedrooms: int("bedrooms"),
+  bathrooms: int("bathrooms"),
+  garages: int("garages"),
+  size: decimal("size", { precision: 10, scale: 2 }),
+  erfSize: decimal("erfSize", { precision: 10, scale: 2 }),
+  description: text("description"),
+  features: text("features"), // JSON array
+
+  // Media
+  images: text("images"), // JSON array of URLs
+  floorPlan: varchar("floorPlan", { length: 500 }),
+  virtualTour: varchar("virtualTour", { length: 500 }),
+
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "under_offer", "sold", "rented", "withdrawn", "expired"]).default("draft").notNull(),
+  listedAt: timestamp("listedAt"),
+  soldAt: timestamp("soldAt"),
+
+  // Syndication
+  publishToProperty24: boolean("publishToProperty24").default(false),
+  publishToPrivateProperty: boolean("publishToPrivateProperty").default(false),
+  publishToWebsite: boolean("publishToWebsite").default(true),
+
+  // Source (for scraped/imported listings)
+  sourceUrl: varchar("sourceUrl", { length: 1000 }),
+  consentRecorded: boolean("consentRecorded").default(false),
+  consentType: mysqlEnum("consentType", ["verbal", "written"]),
+  consentNotes: text("consentNotes"),
+
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FullListing = typeof fullListings.$inferSelect;
+export type InsertFullListing = typeof fullListings.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPLIANCE DOCUMENTS — FFC, PI insurance, POPIA, mandates, etc.
+// ─────────────────────────────────────────────────────────────────────────────
+export const complianceDocs = mysqlTable("compliance_docs", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId"), // null = company-level doc
+  docType: varchar("docType", { length: 100 }).notNull(), // FFC, PI_insurance, POPIA_policy, etc.
+  docName: varchar("docName", { length: 255 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 1000 }),
+  issueDate: timestamp("issueDate"),
+  expiryDate: timestamp("expiryDate"),
+  status: mysqlEnum("status", ["valid", "expiring_soon", "expired", "pending"]).default("pending").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ComplianceDoc = typeof complianceDocs.$inferSelect;
+export type InsertComplianceDoc = typeof complianceDocs.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPENSES — operational costs and expense tracking
+// ─────────────────────────────────────────────────────────────────────────────
+export const expenses = mysqlTable("expenses", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  category: varchar("category", { length: 100 }).notNull(), // marketing, travel, office, subscriptions, etc.
+  description: varchar("description", { length: 255 }).notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 10 }).default("ZAR"),
+  receiptUrl: varchar("receiptUrl", { length: 1000 }),
+  expenseDate: timestamp("expenseDate").notNull(),
+  approved: boolean("approved").default(false),
+  approvedBy: int("approvedBy"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Expense = typeof expenses.$inferSelect;
+export type InsertExpense = typeof expenses.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GOALS — agent and company performance targets
+// ─────────────────────────────────────────────────────────────────────────────
+export const goals = mysqlTable("goals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // null = company goal
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  goalType: mysqlEnum("goalType", ["revenue", "deals", "listings", "leads", "commission", "custom"]).notNull(),
+  targetValue: decimal("targetValue", { precision: 15, scale: 2 }).notNull(),
+  currentValue: decimal("currentValue", { precision: 15, scale: 2 }).default("0.00"),
+  unit: varchar("unit", { length: 50 }).default("ZAR"), // ZAR, count, %
+  period: mysqlEnum("period", ["monthly", "quarterly", "annual"]).default("monthly").notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
+  status: mysqlEnum("status", ["active", "achieved", "missed", "cancelled"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Goal = typeof goals.$inferSelect;
+export type InsertGoal = typeof goals.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPANY NEWS — internal announcements and updates
+// ─────────────────────────────────────────────────────────────────────────────
+export const companyNews = mysqlTable("company_news", {
+  id: int("id").autoincrement().primaryKey(),
+  authorId: int("authorId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  category: mysqlEnum("category", ["announcement", "policy", "training", "achievement", "market_update", "general"]).default("general").notNull(),
+  pinned: boolean("pinned").default(false),
+  publishedAt: timestamp("publishedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CompanyNews = typeof companyNews.$inferSelect;
+export type InsertCompanyNews = typeof companyNews.$inferInsert;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DEED SEARCH RECORDS — property ownership lookups
+// ─────────────────────────────────────────────────────────────────────────────
+export const deedSearchRecords = mysqlTable("deed_search_records", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  searchQuery: varchar("searchQuery", { length: 500 }).notNull(),
+  area: varchar("area", { length: 200 }),
+  ownerName: varchar("ownerName", { length: 200 }),
+  erfNumber: varchar("erfNumber", { length: 100 }),
+  titleDeedNumber: varchar("titleDeedNumber", { length: 100 }),
+  propertyAddress: varchar("propertyAddress", { length: 500 }),
+  estimatedValue: decimal("estimatedValue", { precision: 15, scale: 2 }),
+  notes: text("notes"),
+  contactedOwner: boolean("contactedOwner").default(false),
+  contactedDate: timestamp("contactedDate"),
+  outcome: varchar("outcome", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DeedSearchRecord = typeof deedSearchRecords.$inferSelect;
+export type InsertDeedSearchRecord = typeof deedSearchRecords.$inferInsert;

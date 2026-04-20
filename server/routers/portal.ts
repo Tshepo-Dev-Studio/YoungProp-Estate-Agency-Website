@@ -11,6 +11,7 @@ import {
   agentInvites,
   referralAccessTokens,
   users,
+  fullListings,
 } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { protectedProcedure, router } from "../_core/trpc";
@@ -1052,4 +1053,26 @@ export const portalRouter = router({
       .where(and(eq(agentInvites.used, false)));
     return Number(result[0]?.count ?? 0);
   }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // LISTINGS
+  // ═══════════════════════════════════════════════════════════════════════════
+  getListings: protectedProcedure
+    .input(z.object({ status: z.string().optional() }).optional())
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+      const rows = await db.select().from(fullListings).orderBy(desc(fullListings.createdAt));
+      if (input?.status) return rows.filter(r => r.status === input.status);
+      return rows;
+    }),
+
+  deleteListing: adminProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      await db.delete(fullListings).where(eq(fullListings.id, input.id));
+      return { success: true };
+    }),
 });

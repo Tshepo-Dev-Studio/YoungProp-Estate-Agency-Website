@@ -36,6 +36,13 @@
       "when": 1776670727858,
       "tag": "0004_thin_nighthawk",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1776701933352,
+      "tag": "0005_right_lightspeed",
+      "breakpoints": true
     }
   ]
 }

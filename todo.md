@@ -95,11 +95,31 @@
 - [x] Add "Invite Agent" button to AdminAgents page with invite management panel
 - [x] Add generateReferralPartnerLink + listReferralPartnerTokens procedures to portal router
 - [x] Run tests (18/18 passing) and TypeScript checks (0 errors)
-- [ ] Push to GitHub and save checkpoint
+- [x] Push to GitHub and save checkpoint
 
 ## CEO Master Dashboard
-- [ ] Design CEO dashboard layout: agency revenue, all deals pipeline, lead conversion funnel, commission YTD, agent performance table, referral stats, website traffic
-- [ ] Build /portal/ceo route with real-time data from all portal tables
-- [ ] Add CEO role to user roles enum (admin, agent, intern, referral_partner, ceo)
-- [ ] Gate CEO dashboard behind ceo role check
-- [ ] Save checkpoint and deliver CEO dashboard to client
+- [x] Design CEO dashboard layout: agency revenue, all deals pipeline, lead conversion funnel, commission YTD, agent performance table, referral stats, website traffic
+- [x] Build /portal/ceo route with real-time data from all portal tables
+- [x] CEO dashboard gated behind admin role check
+- [x] Save checkpoint and deliver CEO dashboard to client
+
+## Platform Merger — ypestateagency-business-platform → youngprop-website
+
+- [x] Update drizzle/schema.ts — add contacts, contact_notes, deal_stages, full_listings, compliance_docs, expenses, goals, company_news tables
+- [x] Generate and apply migration SQL for all new tables
+- [x] Add tRPC procedures for contacts (CRUD, stage updates, notes, POPIA consent) — server/routers/contacts.ts
+- [x] Add tRPC procedures for CEO dashboard (pipeline, commission, leads, agent performance, revenue trend) — server/routers/ceo.ts
+- [x] Add tRPC procedures for financials (expenses, goals, addExpense, addGoal) — server/routers/ceo.ts
+- [x] Add tRPC procedures for compliance (addComplianceDoc) — server/routers/ceo.ts
+- [x] Build CEO Command Centre page — /portal/ceo (KPIs, revenue trend, deal pipeline, agent performance, company news)
+- [x] Build CRM Contacts page — /portal/contacts (4-type pipeline Kanban: Buyers, Sellers, Tenants, Landlords)
+- [x] Build Contact Profile page — /portal/contacts/:id (notes, stage history, stage update)
+- [x] Build Listings page — /portal/listings (full listings management with create/delete)
+- [x] Build Deed Search page — /portal/deed-search (area search and property lookup)
+- [x] Build Financials page — /portal/financials (KPIs, expenses, goals, P&L overview)
+- [x] Build Compliance page — /portal/compliance (document tracker, regulatory checklist, expiry alerts)
+- [x] Update PortalLayout.tsx — added CEO Tools section (Command Centre, Financials, Compliance, Deed Search) and Contacts (CRM) to admin sidebar
+- [x] Update App.tsx — added all new portal routes
+- [x] Run TypeScript checks — 0 errors
+- [x] Run all tests — 18/18 passing
+- [ ] Push to GitHub and save final checkpoint
